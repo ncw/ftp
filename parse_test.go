@@ -29,6 +29,10 @@ var listTests = []line{
 	{"-rwxr-xr-x    3 110      1002            1234567 Dec 02  2009 fileName", "fileName", 1234567, EntryTypeFile, time.Date(2009, time.December, 2, 0, 0, 0, 0, time.UTC)},
 	{"lrwxrwxrwx   1 root     other          7 Jan 25 00:17 bin -> usr/bin", "bin -> usr/bin", 0, EntryTypeLink, time.Date(thisYear, time.January, 25, 0, 17, 0, 0, time.UTC)},
 
+	// with initial spaces in the file name
+	{"drwxrwxr-x   2 sftptest sftptest     4096 May 16 14:15  initial space dir", " initial space dir", 0, EntryTypeFolder, time.Date(2017, time.May, 16, 14, 15, 0, 0, time.UTC)},
+	{"-rw-rw-r--   1 sftptest sftptest        1 May 16 13:50  initial space file", " initial space file", 1, EntryTypeFile, time.Date(2017, time.May, 16, 13, 50, 0, 0, time.UTC)},
+
 	// Another ls style
 	{"drwxr-xr-x               folder        0 Aug 15 05:49 !!!-Tipp des Haus!", "!!!-Tipp des Haus!", 0, EntryTypeFolder, time.Date(thisYear, time.August, 15, 5, 49, 0, 0, time.UTC)},
 	{"drwxrwxrwx               folder        0 Aug 11 20:32 P0RN", "P0RN", 0, EntryTypeFolder, time.Date(thisYear, time.August, 11, 20, 32, 0, 0, time.UTC)},

@@ -4,7 +4,6 @@ package ftp
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"io"
 	"net"
 	"net/textproto"
@@ -337,26 +336,23 @@ func parseRFC3659ListLine(line string) (*Entry, error) {
 	return e, nil
 }
 
-// parse file or folder name with multiple spaces
-func parseLsListLineName(line string, fields []string, offset int) string {
-	if offset < 1 {
-		return ""
-	}
-
-	match := fmt.Sprintf(" %s ", fields[offset-1])
-	index := strings.Index(line, match)
-	if index == -1 {
-		return ""
-	}
-
-	index += len(match)
-	return strings.TrimSpace(line[index:])
-}
-
 // parseLsListLine parses a directory line in a format based on the output of
 // the UNIX ls command.
 func parseLsListLine(line string) (*Entry, error) {
-	fields := strings.Fields(line)
+	// split line into space separated fields but only up to the
+	// 9th in which we put the remainder of the line
+	parts := strings.Split(line, " ")
+	fields := []string{}
+	for i, part := range parts {
+		if len(fields) >= 8 {
+			fields = append(fields, strings.Join(parts[i:], " "))
+			break
+		}
+		// Ignore multiple spaces
+		if part != "" {
+			fields = append(fields, part)
+		}
+	}
 	if len(fields) >= 7 && fields[1] == "folder" && fields[2] == "0" {
 		e := &Entry{
 			Type: EntryTypeFolder,
@@ -412,11 +408,7 @@ func parseLsListLine(line string) (*Entry, error) {
 		return nil, err
 	}
 
-	e.Name = parseLsListLineName(line, fields, 8)
-	if len(e.Name) == 0 {
-		e.Name = strings.Join(fields[8:], " ")
-	}
-
+	e.Name = fields[8]
 	return e, nil
 }
 
